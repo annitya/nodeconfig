@@ -44,7 +44,7 @@ public class TypeScriptStubLibrary implements StartupActivity, DumbAware
 
     private void checkIsNodeConfigProject(Project project)
     {
-        Boolean hasConfigFiles = ConfigUtilities
+        boolean hasConfigFiles = ConfigUtilities
             .getConfigFiles(project)
             .size() > 0;
 

@@ -4,38 +4,44 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor;
-import java.util.HashSet;
 
-class JsPropertyWalker extends JSRecursiveWalkingElementVisitor
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class JsPropertyWalker extends JSRecursiveWalkingElementVisitor
 {
-    private final HashSet<LookupElement> completions = new HashSet<>();
+    private final HashMap<String, JSProperty> properties = new HashMap<>();
 
-    HashSet<LookupElement> getCompletions() { return completions; }
+    public HashMap<String, JSProperty> getProperties() { return properties; }
+
+    List<LookupElement> getCompletions()
+    {
+        return properties
+                .keySet()
+                .stream()
+                .map(LookupElementBuilder::create)
+                .collect(Collectors.toList());
+    }
 
     @Override
-    public void visitJSProperty(JSProperty node)
+    public void visitJSProperty(JSProperty property)
     {
-        super.visitJSProperty(node);
+        super.visitJSProperty(property);
 
-        if (node.getNamespace() == null)
-        {
+        String name = property.getName();
+
+        if (name == null) {
             return;
         }
 
-        String qualifiedName = node.getQualifiedName();
+        String completion = property
+            .getJSNamespace()
+            .getResolvedTypeText()
+            .replace("exports.", "")
+            .concat(".")
+            .concat(name);
 
-        if (qualifiedName == null)
-        {
-            return;
-        }
-
-        qualifiedName = qualifiedName.replace("module.exports.", "");
-
-        if (qualifiedName.length() == 0)
-        {
-            return;
-        }
-
-        completions.add(LookupElementBuilder.create(qualifiedName));
+        properties.put(completion, property);
     }
 }

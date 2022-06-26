@@ -4,12 +4,13 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class CompletionBuilder
 {
-    public static HashSet<LookupElement> getCompletions(PsiFile file)
+    public static List<LookupElement> getCompletions(PsiFile file)
     {
         String extension = Optional
             .ofNullable(file.getVirtualFile())
@@ -29,8 +30,7 @@ public class CompletionBuilder
 
                 return jsonWalker.getCompletions();
             default:
-                return new HashSet<>();
-
+                return Collections.emptyList();
         }
     }
 }

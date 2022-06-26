@@ -22,7 +22,7 @@ public class ConfigUtilities
             .collect(Collectors.toList());
     }
 
-    private static List<PsiFile> getConfigFiles(Project project, String extension)
+    public static List<PsiFile> getConfigFiles(Project project, String extension)
     {
         VirtualFile[] sourceRoots = ProjectRootManager
             .getInstance(project)
@@ -30,7 +30,7 @@ public class ConfigUtilities
 
         List<VirtualFile> configDirectories = Arrays
             .stream(sourceRoots)
-            .map(sourceRoot -> sourceRoot.findChild("config"))
+            .map(sourceRoot -> sourceRoot.findFileByRelativePath("src/config"))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 

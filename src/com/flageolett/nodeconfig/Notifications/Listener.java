@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.library.download.TypeScriptAllStubsFile;
 import com.intellij.lang.javascript.library.download.TypeScriptDefinitionFilesRootsProvider;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.webcore.libraries.ui.download.DownloadableFileSetDescriptionWithUrl;
@@ -29,7 +28,7 @@ class Listener implements NotificationListener
     {
         // The user clicked something... hide the balloon.
         notification.hideBalloon();
-        Boolean enable = event.getDescription().equals("1");
+        boolean enable = event.getDescription().equals("1");
 
         if (!enable)
         {

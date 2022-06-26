@@ -4,26 +4,16 @@ import com.intellij.notification.*;
 import com.intellij.openapi.project.Project;
 import org.apache.commons.lang.StringUtils;
 
-public class Library
-{
+public class Library {
     public static void send(Project project)
     {
-        NotificationGroup group = new NotificationGroup(
-            "NodeConfig",
-            NotificationDisplayType.BALLOON,
-            true
-        );
+        String spaces = StringUtils.repeat("&nbsp;", 32);
+        String content = "<p>Enable node-config completions?</p><br /><a href='1'>Yes</a>" + spaces + "<a href='0'>No</a>";
 
-        String spaces = StringUtils.repeat("&nbsp;", 16);
-
-        Notification notification = group.createNotification(
-            "Enable node-config completions?",
-            "",
-            "<a href='1'>Yes</a>" + spaces + "<a href='0'>No</a>",
-            NotificationType.INFORMATION,
-            new Listener(project)
-        );
-
-        Notifications.Bus.notify(notification);
+        NotificationGroupManager.getInstance()
+            .getNotificationGroup("NodeConfig")
+            .createNotification(content, NotificationType.INFORMATION)
+            .setListener(new Listener(project))
+            .notify(project);
     }
 }

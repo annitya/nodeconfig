@@ -3,6 +3,7 @@
     <name>NodeConfig</name>
     <version>2.0.0</version>
     <vendor email="henning.kvinnesland@gmail.com" url="https://github.com/annitya/nodeconfig">Flageolett</vendor>
+    <resource-bundle>META-INF.plugin</resource-bundle>
 
     <description><![CDATA[Adds Support for code-completion and goto for config-files.]]></description>
 
@@ -29,16 +30,17 @@
         ]]>
     </change-notes>
 
-    <idea-version since-build="173.0"/>
+    <idea-version since-build="213.0"/>
     <depends>com.intellij.modules.lang</depends>
     <depends>JavaScript</depends>
     <depends>com.intellij.css</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="com.flageolett.nodeconfig.Utilities.TypeScriptStubLibrary"/>
-        <completion.contributor implementationClass="com.flageolett.nodeconfig.ConfigCompletionContributor"
-                                language="JavaScript" order="first"/>
+        <completion.contributor implementationClass="com.flageolett.nodeconfig.ConfigCompletionContributor" language="JavaScript" order="first"/>
         <inspectionToolProvider implementation="com.flageolett.nodeconfig.Inspections.ConfigInspectionProvider"/>
+<!--        <psi.referenceContributor language="JavaScript" implementation="com.flageolett.nodeconfig.Reference.Contributor" order="first" />-->
+        <notificationGroup id="NodeConfig" displayType="BALLOON" key="notification.group.name"/>
     </extensions>
 
     <actions/>

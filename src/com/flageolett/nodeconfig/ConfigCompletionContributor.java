@@ -19,27 +19,27 @@ import java.util.Optional;
 
 public class ConfigCompletionContributor extends CompletionContributor
 {
-    private Boolean isWithinQuotes(PsiElement element)
+    private static Boolean isGetOrHasMethod(PsiElement element)
+    {
+        String methodName = Optional
+                .ofNullable(PsiTreeUtil.getParentOfType(element, JSCallExpression.class))
+                .map(JSCallExpression::getMethodExpression)
+                .map(PsiElement::getReference)
+                .map(PsiReference::resolve)
+                .filter(psiElement -> psiElement instanceof TypeScriptFunctionSignature)
+                .map(TypeScriptFunctionSignature.class::cast)
+                .map(NavigationItem::getName)
+                .orElse("");
+
+        return methodName.equals("has") || methodName.equals("get");
+    }
+
+    private static Boolean isWithinQuotes(PsiElement element)
     {
         return Optional
             .ofNullable(PsiTreeUtil.getParentOfType(element, JSLiteralExpression.class))
             .map(JSLiteralExpression::isQuotedLiteral)
             .orElse(false);
-    }
-
-    private Boolean isCorrectMethod(PsiElement element)
-    {
-        String methodName = Optional
-            .ofNullable(PsiTreeUtil.getParentOfType(element, JSCallExpression.class))
-            .map(JSCallExpression::getMethodExpression)
-            .map(PsiElement::getReference)
-            .map(PsiReference::resolve)
-            .filter(psiElement -> psiElement instanceof TypeScriptFunctionSignature)
-            .map(TypeScriptFunctionSignature.class::cast)
-            .map(NavigationItem::getName)
-            .orElse("");
-
-        return methodName.equals("has") || methodName.equals("get");
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ConfigCompletionContributor extends CompletionContributor
 
         PsiElement currentElement = parameters.getPosition();
 
-        if (!isWithinQuotes(currentElement) || !isCorrectMethod(currentElement))
+        if (!isWithinQuotes(currentElement) || !isGetOrHasMethod(currentElement))
         {
             return;
         }

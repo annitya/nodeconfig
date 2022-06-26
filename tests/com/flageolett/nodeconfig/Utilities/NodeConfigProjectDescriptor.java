@@ -1,14 +1,12 @@
 package com.flageolett.nodeconfig.Utilities;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreterManager;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.lang.javascript.library.download.TypeScriptAllStubsFile;
+import com.intellij.lang.javascript.library.typings.TypeScriptExternalDefinitionsRegistry;
+import com.intellij.lang.javascript.library.typings.TypeScriptPackageName;
 import com.intellij.lang.typescript.library.download.TypeScriptDefinitionFilesDirectory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -17,14 +15,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
 class NodeConfigProjectDescriptor extends LightProjectDescriptor
 {
@@ -56,17 +51,9 @@ class NodeConfigProjectDescriptor extends LightProjectDescriptor
             return;
         }
 
-        List<String> args = ContainerUtil.newArrayList(NodeCommandLineUtil.getInstallPackageCommand(interpreter), TypeScriptStubLibrary.getNameForLibrary(description));
-        Collections.addAll(args, "--ignore-scripts".split(" +"));
-
-        try
-        {
-            GeneralCommandLine commandLine = NodeCommandLineUtil.createNpmCommandLine(nodeModulesDir, interpreter, args);
-            CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
-            processHandler.runProcess();
-
-        }
-        catch (ExecutionException ignored) {}
+        TypeScriptExternalDefinitionsRegistry registry = new TypeScriptExternalDefinitionsRegistry();
+        TypeScriptPackageName packageName = new TypeScriptPackageName("config", null);
+        registry.installPackage(packageName, project, null);
 
         updateLibraries(project, description);
     }
@@ -75,7 +62,8 @@ class NodeConfigProjectDescriptor extends LightProjectDescriptor
     {
         ApplicationManager
             .getApplication()
-            .runWriteAction(() -> {
+            .runWriteAction(() ->
+            {
                 String libraryName = TypeScriptStubLibrary.getNameForLibrary(description);
                 JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
                 libraryManager.createLibrary(libraryName, VirtualFile.EMPTY_ARRAY, VirtualFile.EMPTY_ARRAY, ArrayUtil.EMPTY_STRING_ARRAY, ScriptingLibraryModel.LibraryLevel.GLOBAL, true);
