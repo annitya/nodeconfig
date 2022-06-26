@@ -2,6 +2,7 @@ package com.flageolett.nodeconfig.ConfigParser;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -22,7 +23,7 @@ public class ConfigUtilities
             .collect(Collectors.toList());
     }
 
-    private static List<PsiFile> getConfigFiles(Project project, String extension)
+    public static List<PsiFile> getConfigFiles(Project project, String extension)
     {
         VirtualFile[] sourceRoots = ProjectRootManager
             .getInstance(project)
@@ -30,9 +31,9 @@ public class ConfigUtilities
 
         List<VirtualFile> configDirectories = Arrays
             .stream(sourceRoots)
-            .map(sourceRoot -> sourceRoot.findChild("config"))
+            .map(sourceRoot -> sourceRoot.findFileByRelativePath("config"))
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
 
         List<VirtualFile> allConfigFiles = new ArrayList<>();
 

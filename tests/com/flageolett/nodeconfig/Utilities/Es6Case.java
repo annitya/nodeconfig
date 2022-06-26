@@ -4,10 +4,10 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.settings.JSRootConfiguration;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-abstract public class Es6Case extends LightCodeInsightFixtureTestCase
+abstract public class Es6Case extends BasePlatformTestCase
 {
     @Override
     protected void setUp() throws Exception
@@ -17,15 +17,18 @@ abstract public class Es6Case extends LightCodeInsightFixtureTestCase
         Project project = myFixture.getProject();
 
         JSRootConfiguration
-            .getInstance(project)
-            .storeLanguageLevelAndUpdateCaches(JSLanguageLevel.JSX);
+                .getInstance(project)
+                .storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6);
 
         // Enable plugin before tests are run.
         TypeScriptStubLibrary.PLUGIN_ENABLED = true;
     }
 
     @Override
-    protected String getTestDataPath() { return "testData"; }
+    protected String getTestDataPath()
+    {
+        return "testData";
+    }
 
     @NotNull
     @Override

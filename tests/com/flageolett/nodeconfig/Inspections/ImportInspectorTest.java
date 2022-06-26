@@ -3,10 +3,10 @@ package com.flageolett.nodeconfig.Inspections;
 import com.flageolett.nodeconfig.Utilities.Es6Case;
 import com.flageolett.nodeconfig.Utilities.TypeScriptStubLibrary;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ImportInspectorTest extends Es6Case
 {
@@ -16,12 +16,17 @@ public class ImportInspectorTest extends Es6Case
         myFixture.enableInspections(new BestPractice());
 
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
-        String highLightLengthReason = "There should be two highlights available.";
-        assertThat(highLightLengthReason, highlightInfos.size(), is(2));
 
-        HighlightInfo bestPracticeHighlight = highlightInfos.get(0);
+        assertThat(highlightInfos)
+                .withFailMessage("There should be two highlights available.")
+                .hasSize(2);
+
+        HighlightInfo bestPracticeHighlight = highlightInfos.getFirst();
         String bestPracticeReason = "The first highlight should be the best-practive inspection.";
-        assertThat(bestPracticeReason, bestPracticeHighlight.getDescription(), is(ImportInspector.PROBLEM_DESCRIPTION));
+
+        assertThat(bestPracticeHighlight.getDescription())
+                .withFailMessage("The first highlight should be the best-practive inspection.")
+                .isEqualTo(ImportInspector.PROBLEM_DESCRIPTION);
     }
 
     public void testNoInspection()
@@ -51,11 +56,17 @@ public class ImportInspectorTest extends Es6Case
     private void verifyNoInspection()
     {
         List<HighlightInfo> highlightInfos = myFixture.doHighlighting();
-        String highLightLengthReason = "There should only be one highlight available.";
-        assertThat(highLightLengthReason, highlightInfos.size(), is(1));
 
-        HighlightInfo highlightInfo = highlightInfos.get(0);
-        String noBestPracticeReason = "The best-practive inspection should not be triggered.";
-        assertThat(noBestPracticeReason, highlightInfo.getDescription(), is(not(ImportInspector.PROBLEM_DESCRIPTION)));
+
+        assertThat(highlightInfos)
+                .withFailMessage("There should only be one highlight available.")
+                .hasSize(1);
+
+
+        HighlightInfo highlightInfo = highlightInfos.getFirst();
+
+        assertThat(highlightInfo.getDescription())
+                .withFailMessage("The best-practice inspection should not be triggered.")
+                        .isNotEqualTo(ImportInspector.PROBLEM_DESCRIPTION);
     }
 }

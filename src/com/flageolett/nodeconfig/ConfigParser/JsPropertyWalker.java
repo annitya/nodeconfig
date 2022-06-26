@@ -3,39 +3,52 @@ package com.flageolett.nodeconfig.ConfigParser;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.JSRecursiveWalkingElementVisitor;
-import java.util.HashSet;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 
-class JsPropertyWalker extends JSRecursiveWalkingElementVisitor
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class JsPropertyWalker extends JSRecursiveWalkingElementVisitor
 {
-    private final HashSet<LookupElement> completions = new HashSet<>();
+    private final HashMap<String, JSProperty> properties = new HashMap<>();
 
-    HashSet<LookupElement> getCompletions() { return completions; }
+    public HashMap<String, JSProperty> getProperties() { return properties; }
+
+    List<LookupElement> getCompletions()
+    {
+        return properties
+                .keySet()
+                .stream()
+                .map(LookupElementBuilder::create)
+                .collect(Collectors.toList());
+    }
 
     @Override
-    public void visitJSProperty(JSProperty node)
+    public void visitJSProperty(@NotNull JSProperty property)
     {
-        super.visitJSProperty(node);
+        super.visitJSProperty(property);
 
-        if (node.getNamespace() == null)
-        {
+        String name = property.getName();
+
+        if (name == null) {
             return;
         }
 
-        String qualifiedName = node.getQualifiedName();
+        boolean hasParent = PsiTreeUtil.getParentOfType(property, JSProperty.class) != null;
 
-        if (qualifiedName == null)
-        {
-            return;
-        }
+        JSQualifiedName qualifiedName = property
+                .getJSNamespace()
+                .getQualifiedName();
 
-        qualifiedName = qualifiedName.replace("module.exports.", "");
+        String baseName = qualifiedName != null ? qualifiedName.getName() : "";
+        boolean isChildProperty = hasParent && !baseName.isEmpty();
 
-        if (qualifiedName.length() == 0)
-        {
-            return;
-        }
+        String completion = isChildProperty ? baseName + "." + name : name;
 
-        completions.add(LookupElementBuilder.create(qualifiedName));
+        properties.put(completion, property);
     }
 }

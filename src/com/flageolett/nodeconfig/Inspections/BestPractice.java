@@ -18,7 +18,7 @@ class BestPractice extends JSInspection
 
     @NotNull
     @Override
-    public String[] getGroupPath()
+    public String @NotNull [] getGroupPath()
     {
         return new String[]{"JavaScript", "NodeConfig"};
     }

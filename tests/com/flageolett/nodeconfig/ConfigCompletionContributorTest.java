@@ -3,22 +3,21 @@ package com.flageolett.nodeconfig;
 import com.flageolett.nodeconfig.Utilities.Es6Case;
 import com.flageolett.nodeconfig.Utilities.TypeScriptStubLibrary;
 import com.intellij.codeInsight.completion.CompletionType;
-import org.hamcrest.Matcher;
 
 import java.util.List;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigCompletionContributorTest extends Es6Case
 {
-    final private Matcher<Iterable<String>> expectedCompletions = hasItems(
-        "auth_key",
-        "database",
-        "database.host",
-        "database.host.uri",
-        "database.name",
-        "database.name.value",
-        "user"
+    private final List<String> configCompletions = List.of(
+            "auth_key",
+            "database",
+            "database.host",
+            "database.host.uri",
+            "database.name",
+            "database.name.value",
+            "user"
     );
 
     public void testJsCompletion()
@@ -72,23 +71,32 @@ public class ConfigCompletionContributorTest extends Es6Case
     private void verifyCompletions()
     {
         List<String> strings = myFixture.getLookupElementStrings();
-        String notNullReason = "Completions should not be null.";
-        assertThat(notNullReason, strings, notNullValue());
 
-        String completionLengthReason = "7 completions should be available.";
-        assertThat(completionLengthReason, strings.size(), is(7));
+        assertThat(strings)
+                .withFailMessage("Completions should not be null.")
+                .isNotNull();
 
-        String availableCompletionsReason = "Completions should be fecthed from config-files.";
-        assertThat(availableCompletionsReason, strings, expectedCompletions);
+        assertThat(strings)
+        .withFailMessage("7 completions should be available.")
+                .hasSize(7);
+
+        assertThat(strings)
+                .withFailMessage("Completions should be fetched from config-files.")
+                .isEqualTo(configCompletions);
+
     }
 
     private void verifyNoCompletions()
     {
         List<String> strings = myFixture.getLookupElementStrings();
-        String notNullReason = "Completions should not be null.";
-        assertThat(notNullReason, strings, notNullValue());
 
-        String noCompletionReason = "Should not return completions from config-file.";
-        assertThat(noCompletionReason, strings, not(expectedCompletions));
+        assertThat(strings)
+            .withFailMessage("Completions should not be null.")
+            .isNotNull();
+
+
+        assertThat(strings)
+            .withFailMessage("Should not return completions from config-file.")
+            .isNotEqualTo(configCompletions);
     }
 }

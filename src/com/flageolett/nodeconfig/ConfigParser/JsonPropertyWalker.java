@@ -10,11 +10,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class JsonPropertyWalker extends JsonRecursiveElementVisitor
+public class JsonPropertyWalker extends JsonRecursiveElementVisitor
 {
-    private final HashSet<LookupElement> completions = new HashSet<>();
+    private final HashMap<String, JsonProperty> properties = new HashMap<>();
 
-    HashSet<LookupElement> getCompletions() { return completions; }
+    public HashMap<String, JsonProperty> getProperties() { return properties; }
+
+    List<LookupElement> getCompletions()
+    {
+        return properties
+                .keySet()
+                .stream()
+                .map(LookupElementBuilder::create)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public void visitProperty(@NotNull JsonProperty property)
@@ -37,6 +46,6 @@ class JsonPropertyWalker extends JsonRecursiveElementVisitor
             .map(JsonProperty::getName)
             .collect(Collectors.joining("."));
 
-        completions.add(LookupElementBuilder.create(qualifiedName));
+        properties.put(qualifiedName, property);
     }
 }

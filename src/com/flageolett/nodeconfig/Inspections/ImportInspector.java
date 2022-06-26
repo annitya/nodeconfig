@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -21,7 +22,7 @@ class ImportInspector extends JSElementVisitor
     }
 
     @Override
-    public void visitES6ImportDeclaration(ES6ImportDeclaration importDeclaration)
+    public void visitES6ImportDeclaration(@NotNull ES6ImportDeclaration importDeclaration)
     {
         if (!TypeScriptStubLibrary.PLUGIN_ENABLED)
         {
@@ -39,7 +40,7 @@ class ImportInspector extends JSElementVisitor
             return;
         }
 
-        Boolean hasImportSpecifiers = importDeclaration
+        boolean hasImportSpecifiers = importDeclaration
             .getImportSpecifiers()
             .length > 0;
 

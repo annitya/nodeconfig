@@ -7,13 +7,15 @@ import com.intellij.lang.javascript.library.download.TypeScriptAllStubsFile;
 import com.intellij.lang.javascript.library.download.TypeScriptDefinitionFilesRootsProvider;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.RootsChangeRescanningInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.webcore.libraries.ui.download.DownloadableFileSetDescriptionWithUrl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
+
+import static com.intellij.openapi.project.RootsChangeRescanningInfo.*;
 
 class Listener implements NotificationListener
 {
@@ -29,7 +31,7 @@ class Listener implements NotificationListener
     {
         // The user clicked something... hide the balloon.
         notification.hideBalloon();
-        Boolean enable = event.getDescription().equals("1");
+        boolean enable = event.getDescription().equals("1");
 
         if (!enable)
         {
@@ -60,7 +62,7 @@ class Listener implements NotificationListener
         JSLibraryMappings mappings = JSLibraryMappings.getInstance(project);
         mappings.associate(null, libraryName, false);
 
-        libraryManager.commitChanges();
+        libraryManager.commitChanges(TOTAL_RESCAN);
         LocalFileSystem.getInstance().refresh(true);
 
         TypeScriptStubLibrary.enable();

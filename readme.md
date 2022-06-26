@@ -19,29 +19,32 @@ Supported products
        
 TODO this version
 -----------------
-    Setup CI/build.
+    Run tests for all supported idea-versions.
+    Verify and add tests for pure TS-projects.
+        - Hmm... What about builtin augmentation?
 
-    Add goto-support for json-config.    
-    Add reference-resolving/completion for js/json-files.
+    Add support for chained get-statements.
+        - What about the leaf-nodes? Are they config-objects as well?
+            - If so, an inspection warning the user about has/get on leaf-nodes should be added.       
+    Add goto-support for js/json-config.    
     Prefix log-message with project.
-    Merge 2.0 into master.
-    Add support for chained get-statements.       
+        - Uh... log-message?
+    Fix the tests.
          
 Roadmap
 -------
-    Show values for leaf-values.       
-    Improve completion-ux.
-        - Requesting completions after a period yields irrelevant results.    
+    Show values for leaf-nodes.       
+    Need to cleanup the project-structure.
+
     add completion-confidence.
         - Auto-popup that bad-boy!
             - When the user types a ".", obviously.    
     goto-implementations.
         - js seems to work for no reason.
             - json not so much.     
-    Missing setting-inspection.
+    Missing setting-value-inspection.
         - Add setting quickfix.
              - Might the reference-resolving also provide the inspection?       
     Add support for find usages/rename refactoring.
-    Add replacement-quickfix for imported properties.
-       
+    Merge 2.0 into master. 
     Suggestions?

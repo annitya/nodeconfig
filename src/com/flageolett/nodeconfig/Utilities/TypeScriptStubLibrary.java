@@ -8,12 +8,16 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.startup.ProjectActivity;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
+import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class TypeScriptStubLibrary implements StartupActivity, DumbAware
+public class TypeScriptStubLibrary implements ProjectActivity
 {
     // The plugin will do nothing if this variable is false.
     public static Boolean PLUGIN_ENABLED = false;
@@ -35,18 +39,20 @@ public class TypeScriptStubLibrary implements StartupActivity, DumbAware
     }
 
     @Override
-    public void runActivity(@NotNull Project project)
+    public @Nullable Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation)
     {
         ApplicationManager
-            .getApplication()
-            .runReadAction(() -> checkIsNodeConfigProject(project));
+                .getApplication()
+                .runReadAction(() -> checkIsNodeConfigProject(project));
+
+        return null;
     }
 
     private void checkIsNodeConfigProject(Project project)
     {
-        Boolean hasConfigFiles = ConfigUtilities
-            .getConfigFiles(project)
-            .size() > 0;
+        boolean hasConfigFiles = !ConfigUtilities
+                .getConfigFiles(project)
+                .isEmpty();
 
         // No supported config-files found. All bets are off.
         if (!hasConfigFiles)
@@ -66,10 +72,10 @@ public class TypeScriptStubLibrary implements StartupActivity, DumbAware
         // Is the library installed?
         HAS_LIBRARY = libraryTable.getLibraryByName(libraryName) != null;
         // Is the library enabled?
-        LIBRARY_ENABLED = libraryManager
-            .getLibraryMappings()
-            .getMappingsByLibraryName(libraryName)
-            .size() > 0;
+        LIBRARY_ENABLED = !libraryManager
+                .getLibraryMappings()
+                .getMappingsByLibraryName(libraryName)
+                .isEmpty();
 
         PLUGIN_ENABLED = HAS_LIBRARY && LIBRARY_ENABLED;
 
