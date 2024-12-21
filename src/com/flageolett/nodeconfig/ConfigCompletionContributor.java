@@ -8,6 +8,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,10 +61,19 @@ public class ConfigCompletionContributor extends CompletionContributor
         // We are in the right spot, only display config-completions.
         result.stopHere();
 
-        ConfigUtilities
-            .getConfigFiles(currentElement.getProject())
-            .stream()
-            .map(CompletionBuilder::getCompletions)
-            .forEach(result::addAllElements);
+        Project project = currentElement.getProject();
+
+        var jsFiles = ConfigUtilities.getJsConfigFiles(project);
+        var jsonFiles = ConfigUtilities.getJsonConfigFiles(project);
+
+        jsFiles
+                .stream()
+                .map(CompletionBuilder::getCompletions)
+                .forEach(result::addAllElements);
+
+        jsonFiles
+                .stream()
+                .map(CompletionBuilder::getCompletions)
+                .forEach(result::addAllElements);
     }
 }

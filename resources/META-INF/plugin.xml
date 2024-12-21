@@ -38,8 +38,14 @@
     <extensions defaultExtensionNs="com.intellij">
         <postStartupActivity implementation="com.flageolett.nodeconfig.Utilities.TypeScriptStubLibrary"/>
         <completion.contributor implementationClass="com.flageolett.nodeconfig.ConfigCompletionContributor" language="JavaScript" order="first"/>
-        <inspectionToolProvider implementation="com.flageolett.nodeconfig.Inspections.ConfigInspectionProvider"/>
-<!--        <psi.referenceContributor language="JavaScript" implementation="com.flageolett.nodeconfig.Reference.Contributor" order="first" />-->
+        <localInspection
+                displayName="Use best practices."
+                groupName="NodeConfig"
+                language="JavaScript"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.flageolett.nodeconfig.Inspections.BestPractice"
+        />
         <notificationGroup id="NodeConfig" displayType="BALLOON" key="notification.group.name"/>
     </extensions>
 

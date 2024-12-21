@@ -22,12 +22,4 @@ class BestPractice extends JSInspection
     {
         return new String[]{"JavaScript", "NodeConfig"};
     }
-
-    @Nls
-    @NotNull
-    @Override
-    public String getDisplayName()
-    {
-        return "Use best practices.";
-    }
 }

@@ -1,5 +1,7 @@
 package com.flageolett.nodeconfig.ConfigParser;
 
+import com.intellij.json.psi.JsonFile;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -21,6 +23,16 @@ public class ConfigUtilities
         return Stream
             .concat(jsConfigFiles.stream(), jsonConfigFiles.stream())
             .collect(Collectors.toList());
+    }
+
+    public static List<JSFile> getJsConfigFiles(Project project) {
+        List<PsiFile> configFiles = getConfigFiles(project, "js");
+        return configFiles.stream().map(file -> (JSFile)file).toList();
+    }
+
+    public static List<JsonFile> getJsonConfigFiles(Project project) {
+        List<PsiFile> configFiles = getConfigFiles(project, "json");
+        return configFiles.stream().map(file -> (JsonFile)file).toList();
     }
 
     public static List<PsiFile> getConfigFiles(Project project, String extension)
